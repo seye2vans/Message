@@ -1,34 +1,33 @@
 "use client"
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 
 interface ProposalMessageProps {
   onYes: () => void
 }
 
 export default function ProposalMessage({ onYes }: ProposalMessageProps) {
-  const [noButtonPos, setNoButtonPos] = useState<{
-    x: number
-    y: number
-  } | null>(null)
+  const [noButtonPos, setNoButtonPos] = useState<{ x: number; y: number } | null>(null)
   const noButtonRef = useRef<HTMLButtonElement>(null)
 
+  // fixed button size
+  const BUTTON_WIDTH = 120
+  const BUTTON_HEIGHT = 48
+  const PADDING = 16
+
   const moveNoButton = () => {
-    if (!noButtonRef.current) return
+    const maxX = window.innerWidth - BUTTON_WIDTH - PADDING
+    const maxY = window.innerHeight - BUTTON_HEIGHT - PADDING
 
-    const buttonRect = noButtonRef.current.getBoundingClientRect()
+    const x = Math.random() * maxX + PADDING
+    const y = Math.random() * maxY + PADDING
 
-    const padding = 20
-    const maxX = window.innerWidth - buttonRect.width - padding
-    const maxY = window.innerHeight - buttonRect.height - padding
-
-    const x = Math.max(padding, Math.min(Math.random() * maxX, maxX))
-    const y = Math.max(padding, Math.min(Math.random() * maxY, maxY))
-
-    setNoButtonPos({
-      x,
-      y,
-    })
+    setNoButtonPos({ x, y })
   }
+
+  // optional: place NO button initially somewhere visible
+  useEffect(() => {
+    moveNoButton()
+  }, [])
 
   return (
     <div className="relative z-20 w-full max-w-md mx-auto">
@@ -41,10 +40,12 @@ export default function ProposalMessage({ onYes }: ProposalMessageProps) {
 
         {/* Content */}
         <div className="text-center py-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-white handwriting-font mb-10">Will you be my Val? 💕</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-white handwriting-font mb-10">
+            Will you be my Val? 💕
+          </h2>
 
           {/* Buttons */}
-          <div className="flex gap-6 justify-center min-h-[70px]">
+          <div className="flex gap-6 justify-center min-h-[70px] relative">
             {/* YES */}
             <button
               onClick={onYes}
@@ -58,19 +59,20 @@ export default function ProposalMessage({ onYes }: ProposalMessageProps) {
               ref={noButtonRef}
               onMouseEnter={moveNoButton}
               onTouchStart={moveNoButton}
-              onClick={moveNoButton}
               style={
                 noButtonPos
                   ? {
                       position: "fixed",
                       left: `${noButtonPos.x}px`,
                       top: `${noButtonPos.y}px`,
+                      width: `${BUTTON_WIDTH}px`,
+                      height: `${BUTTON_HEIGHT}px`,
                       transition: "transform 0.25s ease-out",
                       zIndex: 20,
                     }
                   : undefined
               }
-              className="px-12 py-3 bg-purple-300 text-white font-semibold rounded-full shadow-lg cursor-default select-none"
+              className="bg-purple-300 text-white font-semibold rounded-full shadow-lg cursor-default select-none flex items-center justify-center"
             >
               No 🙈
             </button>
