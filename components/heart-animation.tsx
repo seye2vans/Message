@@ -52,7 +52,7 @@ export default function HeartAnimation({ delay = 0, size = "md" }: HeartAnimatio
       `}</style>
 
       <svg
-        className="w-full h-full text-purple-500 heart-beat"
+        className="w-full h-full text-red-500 heart-beat"
         style={{ animationDelay: `${delay}s` }}
         viewBox="0 0 24 24"
         fill="currentColor"
